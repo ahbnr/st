@@ -30,9 +30,9 @@ static float chscale = 1.0;
 /*
  * word delimiter string
  *
- * More advanced example: " `'\"()[]{}"
+ * More advanced example: L" `'\"()[]{}"
  */
-char *worddelimiters = " ";
+wchar_t *worddelimiters = L" ";
 
 /* selection timeouts (in milliseconds) */
 static unsigned int doubleclicktimeout = 300;
@@ -81,48 +81,6 @@ char *termname = "xterm-256color";
  *	stty tabs
  */
 unsigned int tabspaces = 8;
-
-// Atom One Theme
-///* Terminal colors (16 first used in escape sequence) */
-//static const char *colorname[] = {
-//	/* 8 normal colors */
-//  "#000000",
-//  "#E45649",
-//  "#50A14F",
-//  "#986801",
-//  "#4078F2",
-//  "#A626A4",
-//  "#0184BC",
-//  "#A0A1A7",
-//
-//	/* 8 bright colors */
-//  "#5c6370",
-//  "#e06c75",
-//  "#50A14F",
-//  "#986801",
-//  "#4078F2",
-//  "#A626A4",
-//  "#0184BC",
-//  "#ffffff",
-//
-//	[255] = 0,
-//
-//	/* more colors can be added after 255 to use with DefaultXX */
-//  "#f9f9f9", // background
-//  "#383a42", // foreground
-//  "#c0c0c0", // cursor
-//  "#2f2f2f" // reverse cursor
-//};
-//
-//
-///*
-// * Default colors (colorname index)
-// * foreground, background, cursor, reverse cursor
-// */
-//unsigned int defaultfg = 257;
-//unsigned int defaultbg = 256;
-//static unsigned int defaultcs = 258;
-//static unsigned int defaultrcs = 259;
 
 // Gruvbox Dark (https://github.com/morhetz/gruvbox-contrib/blob/master/st/gruvbox-dark.h)
 /* Terminal colors (16 first used in escape sequence) */
@@ -194,20 +152,24 @@ static unsigned int mousebg = 0;
 static unsigned int defaultattr = 11;
 
 /*
+ * Force mouse select/shortcuts while mask is active (when MODE_MOUSE is set).
+ * Note that if you want to use ShiftMask with selmasks, set this to an other
+ * modifier, set to 0 to not use it.
+ */
+static uint forcemousemod = ShiftMask;
+
+/*
  * Internal mouse shortcuts.
  * Beware that overloading Button1 will disable the selection.
  */
+const unsigned int mousescrollincrement = 1;
 static MouseShortcut mshortcuts[] = {
-	/* button               mask            string */
-	{ Button4,              XK_ANY_MOD,     "\031" },
-	{ Button5,              XK_ANY_MOD,     "\005" },
-};
-
-static const unsigned int scrollspeed = 5;
-MouseKey mkeys[] = {
-	/* button               mask            function        argument */
-	{ Button4,              XK_NO_MOD,      kscrollup,      {.i =  scrollspeed} },
-	{ Button5,              XK_NO_MOD,      kscrolldown,    {.i =  scrollspeed} },
+	/* mask                 button   function        argument       release */
+	{ XK_ANY_MOD,           Button4, kscrollup,      {.i = 1},      0, /* !alt */ -1 },
+	{ XK_ANY_MOD,           Button5, kscrolldown,    {.i = 1},      0, /* !alt */ -1 },
+	{ XK_ANY_MOD,           Button2, selpaste,       {.i = 0},      1 },
+	{ XK_ANY_MOD,           Button4, ttysend,        {.s = "\031"} },
+	{ XK_ANY_MOD,           Button5, ttysend,        {.s = "\005"} },
 };
 
 /* Internal keyboard shortcuts. */
@@ -228,6 +190,8 @@ static Shortcut shortcuts[] = {
 	{ TERMMOD,              XK_Y,           selpaste,       {.i =  0} },
 	{ ShiftMask,            XK_Insert,      selpaste,       {.i =  0} },
 	{ TERMMOD,              XK_Num_Lock,    numlock,        {.i =  0} },
+	{ ShiftMask,            XK_Page_Up,     kscrollup,      {.i = -1} },
+	{ ShiftMask,            XK_Page_Down,   kscrolldown,    {.i = -1} },
 };
 
 /*
@@ -245,10 +209,6 @@ static Shortcut shortcuts[] = {
  * * 0: no value
  * * > 0: cursor application mode enabled
  * * < 0: cursor application mode disabled
- * crlf value
- * * 0: no value
- * * > 0: crlf mode is enabled
- * * < 0: crlf mode is disabled
  *
  * Be careful with the order of the definitions because st searches in
  * this table sequentially, so any XK_ANY_MOD must be in the last
@@ -266,13 +226,6 @@ static KeySym mappedkeys[] = { -1 };
  * numlock (Mod2Mask) and keyboard layout (XK_SWITCH_MOD) are ignored.
  */
 static uint ignoremod = Mod2Mask|XK_SWITCH_MOD;
-
-/*
- * Override mouse-select while mask is active (when MODE_MOUSE is set).
- * Note that if you want to use ShiftMask with selmasks, set this to an other
- * modifier, set to 0 to not use it.
- */
-static uint forceselmod = ShiftMask;
 
 /*
  * This is the huge key array which defines all compatibility to the Linux
