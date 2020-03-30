@@ -1,11 +1,12 @@
-pkgname=st-mscrollback-hack-nerd
-pkgver=r1094.9bb517b
+pkgname=st-custom
+pkgver=r1097.70f3fec
 pkgrel=1
 pkgdesc="Suckless terminal with mouse scrollback, gruvbox theme and hack nerd font"
 arch=('x86_64')
 url="https://st.suckless.org/"
 license=('MIT')
-depends=('libx11' 'libxft')
+provides=('st')
+depends=('libx11' 'libxft' 'nerd-fonts-hack')
 
 prepare() {
   cp -R $startdir/* $srcdir || true
