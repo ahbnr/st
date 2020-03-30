@@ -8,7 +8,7 @@ license=('MIT')
 depends=('libx11' 'libxft')
 
 prepare() {
-  cp -R ./* "$srcdir"
+  cp -R $startdir/* $srcdir || true
 }
 
 build() {
