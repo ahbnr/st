@@ -6,6 +6,7 @@ arch=('x86_64')
 url="https://st.suckless.org/"
 license=('MIT')
 provides=('st')
+conflicts=('st')
 depends=('libx11' 'libxft' 'nerd-fonts-hack')
 
 prepare() {
