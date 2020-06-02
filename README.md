@@ -11,13 +11,14 @@ makepkg -sif PKGBUILD
 Used patches:
 
 * [scrollback](https://st.suckless.org/patches/scrollback/)
+* [boxdraw](https://st.suckless.org/patches/boxdraw/)
 
 Some info about my configuration:
 
 * [gruvbox](https://github.com/gruvbox-community/gruvbox) color scheme
   * using the color definition header from here:
     https://github.com/gruvbox-community/gruvbox-contrib/blob/master/st/gruvbox-dark.h
-* Hack Nerd Font
+* JetBrains Mono Nerd Font
   * https://www.nerdfonts.com/
-  * https://sourcefoundry.org/hack/
-  * https://aur.archlinux.org/packages/nerd-fonts-hack/
+  * https://www.jetbrains.com/lp/mono/
+  * https://aur.archlinux.org/packages/nerd-fonts-jetbrains-mono/
