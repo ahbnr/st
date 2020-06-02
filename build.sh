@@ -8,6 +8,7 @@
 # and  http://ix.io/2cCr
 
 echo 'Cleaning up sources...'
+rm boxdraw*
 git reset --hard
 
 echo 'Applying patches...'
